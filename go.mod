@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
-	github.com/cyruzin/golang-tmdb v1.6.5
+	github.com/cyruzin/golang-tmdb v1.6.8
 	github.com/eko/gocache/lib/v4 v4.1.6
 	github.com/eko/gocache/store/go_cache/v4 v4.2.2
 	github.com/joho/godotenv v1.5.1

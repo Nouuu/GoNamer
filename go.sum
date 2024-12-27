@@ -75,8 +75,8 @@ github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGX
 github.com/containerd/console v1.0.3/go.mod h1:7LqA/THxQ86k76b8c/EMSiaJ3h1eZkMkXar0TQ1gf3U=
 github.com/containerd/console v1.0.4 h1:F2g4+oChYvBTsASRTz8NP6iIAi97J3TtSAsLbIFn4ro=
 github.com/containerd/console v1.0.4/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
-github.com/cyruzin/golang-tmdb v1.6.5 h1:Il898nbmkY425zw9+W22K13ibgE2mVWmY1Ys9ui8e4U=
-github.com/cyruzin/golang-tmdb v1.6.5/go.mod h1:ZSryJLCcY+9TiKU+LbouXKns++YBrM8Tizannr05c+I=
+github.com/cyruzin/golang-tmdb v1.6.8 h1:oJCBSn21TRQmFSnbvX8v0EF2JoGt0hwOCiaATVcpmM0=
+github.com/cyruzin/golang-tmdb v1.6.8/go.mod h1:ZSryJLCcY+9TiKU+LbouXKns++YBrM8Tizannr05c+I=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
