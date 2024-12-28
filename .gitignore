@@ -24,3 +24,4 @@ dist
 coverage.txt
 security-report.json
 config.yml
+project_knowledge.md
