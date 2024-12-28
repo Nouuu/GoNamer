@@ -94,8 +94,8 @@ func (h *MovieHandler) handleManualSearch(ctx context.Context) error {
 	}
 
 	h.suggestion.SuggestedMovies = movies.Movies
-	if len(h.suggestion.SuggestedMovies) > h.Config.MaxResults {
-		h.suggestion.SuggestedMovies = h.suggestion.SuggestedMovies[:h.Config.MaxResults]
+	if len(h.suggestion.SuggestedMovies) > h.config.Renamer.MaxResults {
+		h.suggestion.SuggestedMovies = h.suggestion.SuggestedMovies[:h.config.Renamer.MaxResults]
 	}
 
 	return h.handleOptions(ctx)
@@ -117,19 +117,19 @@ func (h *MovieHandler) handleManualRename(ctx context.Context) error {
 		ctx,
 		h.suggestion.Movie.FullPath,
 		filepath.Join(filepath.Dir(h.suggestion.Movie.FullPath), filename),
-		h.Config.DryRun,
+		h.config.Renamer.DryRun,
 	)
 }
 
 func (h *MovieHandler) renameMovie(ctx context.Context, suggestion mediarenamer.MovieSuggestions, movie mediadata.Movie) error {
-	newFilename := mediarenamer.GenerateMovieFilename(h.Config.MoviePattern, movie, suggestion.Movie)
+	newFilename := mediarenamer.GenerateMovieFilename(h.config.Renamer.Patterns.Movie, movie, suggestion.Movie)
 	if newFilename == suggestion.Movie.OriginalFilename {
 		ui.ShowSuccess("Original filename is already correct for %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
 		return nil
 	}
 
 	pterm.Info.Println("Renaming movie ", pterm.Yellow(suggestion.Movie.OriginalFilename), "to", pterm.Yellow(newFilename))
-	err := h.mediaRenamer.RenameMovie(ctx, suggestion.Movie, movie, h.Config.MoviePattern, h.Config.DryRun)
+	err := h.mediaRenamer.RenameMovie(ctx, suggestion.Movie, movie, h.config.Renamer.Patterns.Movie, h.config.Renamer.DryRun)
 	if err != nil {
 		pterm.Error.Println(pterm.Sprintf("Error renaming movie: %v", err))
 		return err

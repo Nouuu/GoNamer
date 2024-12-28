@@ -1,0 +1,19 @@
+# config.yml
+api:
+  tmdb:
+    key: ""  # Clé API TMDB requise
+    language: "fr-FR"              # Langue par défaut pour les requêtes
+
+scanner:
+  media_path: "./"                 # Chemin des médias à scanner
+  recursive: true                  # Scan récursif des dossiers
+  include_not_found: false         # Inclure les fichiers non trouvés
+
+renamer:
+  dry_run: true                    # Mode simulation (pas de renommage réel)
+  type: "movie"                    # Type de média : "movie" ou "tvshow"
+  patterns:
+    movie: "{name} - {year}{extension}"
+    tvshow: "{name} - {season}x{episode}{extension}"
+  max_results: 5                   # Nombre maximum de suggestions
+  quick_mode: false                # Mode rapide sans confirmation

@@ -7,15 +7,15 @@ import (
 
 	"github.com/nouuu/gonamer/cmd/cli/handlers"
 	"github.com/nouuu/gonamer/cmd/cli/ui"
-	"github.com/nouuu/gonamer/conf"
 	"github.com/nouuu/gonamer/internal/mediadata"
 	"github.com/nouuu/gonamer/internal/mediarenamer"
 	"github.com/nouuu/gonamer/internal/mediascanner"
+	"github.com/nouuu/gonamer/pkg/config"
 	"github.com/pterm/pterm"
 )
 
 type Cli struct {
-	Config       conf.Config
+	config       *config.Config
 	scanner      mediascanner.MediaScanner
 	mediaRenamer *mediarenamer.MediaRenamer
 	tvClient     mediadata.TvShowClient
@@ -24,9 +24,9 @@ type Cli struct {
 
 var ErrExit = errors.New("exit requested")
 
-func NewCli(scanner mediascanner.MediaScanner, mediaRenamer *mediarenamer.MediaRenamer, movieClient mediadata.MovieClient, tvClient mediadata.TvShowClient) *Cli {
+func NewCli(scanner mediascanner.MediaScanner, mediaRenamer *mediarenamer.MediaRenamer, movieClient mediadata.MovieClient, tvClient mediadata.TvShowClient, config *config.Config) *Cli {
 	return &Cli{
-		Config:       conf.LoadConfig(),
+		config:       config,
 		scanner:      scanner,
 		mediaRenamer: mediaRenamer,
 		movieClient:  movieClient,
@@ -35,10 +35,10 @@ func NewCli(scanner mediascanner.MediaScanner, mediaRenamer *mediarenamer.MediaR
 }
 
 func (c *Cli) Run(ctx context.Context) {
-	switch c.Config.Type {
-	case conf.Movie:
+	switch c.config.Renamer.Type {
+	case config.Movie:
 		c.processMovie(ctx)
-	case conf.TvShow:
+	case config.TvShow:
 		c.processTvShow(ctx)
 	}
 }
@@ -67,7 +67,7 @@ func (c *Cli) processMoviesList(ctx context.Context, movies []mediascanner.Movie
 		ui.ShowInfo("Processing movie %d/%d: %s", i+1, len(movies), pterm.Yellow(movie.OriginalFilename))
 
 		// Recherche des suggestions
-		suggestions, err := c.mediaRenamer.SuggestMovies(ctx, movie, c.Config.MaxResults)
+		suggestions, err := c.mediaRenamer.SuggestMovies(ctx, movie, c.config.Renamer.MaxResults)
 		if err != nil {
 			suggestions = mediarenamer.MovieSuggestions{Movie: movie}
 			ui.ShowError("Error finding suggestions for %s: %v", movie.OriginalFilename, err)
@@ -75,7 +75,7 @@ func (c *Cli) processMoviesList(ctx context.Context, movies []mediascanner.Movie
 
 		// Création et exécution du handler
 		handler := handlers.NewMovieHandler(
-			handlers.NewBaseHandler(c.Config),
+			handlers.NewBaseHandler(c.config),
 			suggestions,
 			c.movieClient,
 			c.mediaRenamer,
@@ -120,7 +120,7 @@ func (c *Cli) processEpisodesList(ctx context.Context, episodes []mediascanner.E
 		ui.ShowInfo("Processing episode %d/%d: %s", i+1, len(episodes), pterm.Yellow(episode.OriginalFilename))
 
 		// Recherche des suggestions
-		suggestions, err := c.mediaRenamer.SuggestEpisodes(ctx, episode, c.Config.MaxResults)
+		suggestions, err := c.mediaRenamer.SuggestEpisodes(ctx, episode, c.config.Renamer.MaxResults)
 		if err != nil {
 			suggestions = mediarenamer.EpisodeSuggestions{Episode: episode}
 			ui.ShowError("Error finding suggestions for %s: %v", episode.OriginalFilename, err)
@@ -128,7 +128,7 @@ func (c *Cli) processEpisodesList(ctx context.Context, episodes []mediascanner.E
 
 		// Création et exécution du handler
 		handler := handlers.NewTvShowHandler(
-			handlers.NewBaseHandler(c.Config),
+			handlers.NewBaseHandler(c.config),
 			suggestions,
 			c.tvClient,
 			c.mediaRenamer,

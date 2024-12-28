@@ -113,8 +113,8 @@ func (h *TvShowHandler) handleManualSearch(ctx context.Context) error {
 		})
 	}
 
-	if len(h.suggestions.SuggestedEpisodes) > h.Config.MaxResults {
-		h.suggestions.SuggestedEpisodes = h.suggestions.SuggestedEpisodes[:h.Config.MaxResults]
+	if len(h.suggestions.SuggestedEpisodes) > h.config.Renamer.MaxResults {
+		h.suggestions.SuggestedEpisodes = h.suggestions.SuggestedEpisodes[:h.config.Renamer.MaxResults]
 	}
 
 	return h.handleOptions(ctx)
@@ -143,7 +143,7 @@ func (h *TvShowHandler) handleManualRename(ctx context.Context) error {
 		ctx,
 		h.suggestions.Episode.FullPath,
 		filepath.Join(filepath.Dir(h.suggestions.Episode.FullPath), filename),
-		h.Config.DryRun,
+		h.config.Renamer.DryRun,
 	)
 }
 
@@ -153,7 +153,7 @@ func (h *TvShowHandler) renameEpisode(
 	tvShow mediadata.TvShow,
 	episode mediadata.Episode,
 ) error {
-	newFilename := mediarenamer.GenerateEpisodeFilename(h.Config.TvShowPattern, tvShow, episode, suggestion.Episode)
+	newFilename := mediarenamer.GenerateEpisodeFilename(h.config.Renamer.Patterns.TVShow, tvShow, episode, suggestion.Episode)
 	if newFilename == suggestion.Episode.OriginalFilename {
 		ui.ShowSuccess("Original filename is already correct for %s", pterm.Yellow(suggestion.Episode.OriginalFilename))
 		return nil
@@ -164,7 +164,7 @@ func (h *TvShowHandler) renameEpisode(
 		pterm.Yellow(newFilename),
 	)
 
-	err := h.mediaRenamer.RenameEpisode(ctx, suggestion.Episode, tvShow, episode, h.Config.TvShowPattern, h.Config.DryRun)
+	err := h.mediaRenamer.RenameEpisode(ctx, suggestion.Episode, tvShow, episode, h.config.Renamer.Patterns.TVShow, h.config.Renamer.DryRun)
 	if err != nil {
 		ui.ShowError("Error renaming episode: %v", err)
 		return err

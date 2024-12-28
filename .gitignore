@@ -23,3 +23,4 @@ build
 dist
 coverage.txt
 security-report.json
+config.yml

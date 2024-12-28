@@ -3,15 +3,14 @@ module github.com/nouuu/gonamer
 go 1.22.0
 
 require (
-	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/cyruzin/golang-tmdb v1.6.8
 	github.com/eko/gocache/lib/v4 v4.1.6
 	github.com/eko/gocache/store/go_cache/v4 v4.2.2
-	github.com/joho/godotenv v1.5.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pterm/pterm v0.12.80
 	go.uber.org/zap v1.27.0
 	golang.org/x/text v0.21.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
