@@ -155,7 +155,7 @@ make test
     - Implement comprehensive testing
     - Add security checks
     - Configure automated releases
-- [ ] Migrate from .env to config.yml file
+- [x] Migrate from .env to config.yml file
     - Design YAML configuration structure
     - Implement configs file loading
     - Add validation layer

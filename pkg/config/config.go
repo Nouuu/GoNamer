@@ -8,6 +8,29 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var defaultConfig = Config{
+	API: APIConfig{
+		TMDB: TMDBConfig{
+			Language: "fr-FR",
+		},
+	},
+	Scanner: ScannerConfig{
+		MediaPath:       "./",
+		Recursive:       true,
+		IncludeNotFound: false,
+	},
+	Renamer: RenamerConfig{
+		DryRun:     true,
+		Type:       Movie,
+		MaxResults: 5,
+		QuickMode:  false,
+		Patterns: PatternConfig{
+			Movie:  "{name} - {year}{extension}",
+			TVShow: "{name} - {season}x{episode}{extension}",
+		},
+	},
+}
+
 type MediaType string
 
 const (
@@ -67,53 +90,27 @@ func LoadConfig(configPath string) (*Config, error) {
 		return nil, fmt.Errorf("failed to decode configuration: %w", err)
 	}
 
-	if err := validateConfig(&cfg); err != nil {
-		return nil, fmt.Errorf("invalid configuration: %w", err)
+	// Apply default values before validation
+	cfg.applyDefaults()
+
+	// Convert relative paths to absolute
+	absPath, err := filepath.Abs(cfg.Scanner.MediaPath)
+	if err != nil {
+		return nil, fmt.Errorf("invalid media path: %w", err)
+	}
+	cfg.Scanner.MediaPath = absPath
+
+	// Validate the final configuration
+	if err := cfg.validate(); err != nil {
+		return nil, err
 	}
 
 	return &cfg, nil
 }
 
-func validateConfig(cfg *Config) error {
-	if cfg.API.TMDB.Key == "" {
-		return fmt.Errorf("TMDB API key is required")
-	}
-
-	if !filepath.IsAbs(cfg.Scanner.MediaPath) {
-		absPath, err := filepath.Abs(cfg.Scanner.MediaPath)
-		if err != nil {
-			return fmt.Errorf("invalid media path: %w", err)
-		}
-		cfg.Scanner.MediaPath = absPath
-	}
-
-	return nil
-}
-
 // CreateDefaultConfig creates a default configuration file
 func CreateDefaultConfig(path string) error {
-	cfg := Config{
-		API: APIConfig{
-			TMDB: TMDBConfig{
-				Language: "fr-FR",
-			},
-		},
-		Scanner: ScannerConfig{
-			MediaPath:       "./",
-			Recursive:       true,
-			IncludeNotFound: false,
-		},
-		Renamer: RenamerConfig{
-			DryRun:     true,
-			Type:       Movie,
-			MaxResults: 5,
-			QuickMode:  false,
-			Patterns: PatternConfig{
-				Movie:  "{name} - {year}{extension}",
-				TVShow: "{name} - {season}x{episode}{extension}",
-			},
-		},
-	}
+	cfg := defaultConfig
 
 	f, err := os.Create(path)
 	if err != nil {
