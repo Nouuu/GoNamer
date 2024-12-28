@@ -13,9 +13,9 @@ CURRENT_VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v
 
 # LDFLAGS for build
 LDFLAGS=-s -w \
-    -X main.version=$(VERSION) \
-    -X main.commit=$(COMMIT) \
-    -X main.date=$(DATE)
+    -X github.com/nouuu/gonamer/cmd.version=$(VERSION) \
+	-X github.com/nouuu/gonamer/cmd.commit=$(COMMIT) \
+	-X github.com/nouuu/gonamer/cmd.date=$(DATE)
 
 tools:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)

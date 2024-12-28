@@ -76,8 +76,5 @@ func init() {
 	// API flags
 	rootCmd.PersistentFlags().StringVarP(&language, languageFlag, languageShort, "en-US", "preferred language for TMDB API")
 
-	// API flags
-	rootCmd.PersistentFlags().StringVarP(&language, "language", "l", "en-US", "preferred language for TMDB API")
-
 	rootCmd.SetVersionTemplate("GoNamer {{.Version}}\n")
 }

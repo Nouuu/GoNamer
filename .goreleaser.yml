@@ -21,9 +21,9 @@ builds:
     flags: -trimpath
     ldflags: |
       -s -w
-      -X main.version={{.Version}}
-      -X main.commit={{.Commit}}
-      -X main.date={{.Date}}
+      -X github.com/nouuu/gonamer/cmd.version=={{.Version}}
+      -X github.com/nouuu/gonamer/cmd.commit={{.Commit}}
+      -X github.com/nouuu/gonamer/cmd.date={{.Date}}
 
 archives:
   - format: tar.gz
