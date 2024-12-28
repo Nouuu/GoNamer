@@ -41,7 +41,7 @@ func (h *TvShowHandler) Handle(ctx context.Context) error {
 	}
 
 	if h.QuickMode {
-		ui.ShowSuccess("Quick - Renaming episode %s", pterm.Yellow(h.suggestions.Episode.OriginalFilename))
+		ui.ShowSuccess(ctx, "Quick - Renaming episode %s", pterm.Yellow(h.suggestions.Episode.OriginalFilename))
 		suggestion := h.suggestions.SuggestedEpisodes[0]
 		return h.renameEpisode(ctx, h.suggestions, suggestion.TvShow, suggestion.Episode)
 	}
@@ -75,7 +75,7 @@ func (h *TvShowHandler) handleOptions(ctx context.Context) error {
 
 	menuBuilder.AddStandardOptions(
 		func() error {
-			ui.ShowInfo("Skipping renaming of %s", pterm.Yellow(h.suggestions.Episode.OriginalFilename))
+			ui.ShowInfo(ctx, "Skipping renaming of %s", pterm.Yellow(h.suggestions.Episode.OriginalFilename))
 			return nil
 		},
 		func() error {
@@ -104,7 +104,7 @@ func (h *TvShowHandler) handleManualSearch(ctx context.Context) error {
 	for _, tvShow := range tvShows.TvShows {
 		episode, err := h.tvClient.GetEpisode(ctx, tvShow.ID, h.suggestions.Episode.Season, h.suggestions.Episode.Episode)
 		if err != nil {
-			ui.ShowError("Error getting episode: %v", err)
+			ui.ShowError(ctx, "Error getting episode: %v", err)
 			continue
 		}
 		h.suggestions.SuggestedEpisodes = append(h.suggestions.SuggestedEpisodes, mediarenamer.SuggestedEpisode{
@@ -121,7 +121,7 @@ func (h *TvShowHandler) handleManualSearch(ctx context.Context) error {
 }
 
 func (h *TvShowHandler) handleManualRename(ctx context.Context) error {
-	ui.ShowInfo("Renaming manually for %s", pterm.Yellow(h.suggestions.Episode.OriginalFilename))
+	ui.ShowInfo(ctx, "Renaming manually for %s", pterm.Yellow(h.suggestions.Episode.OriginalFilename))
 
 	defaultValue := fmt.Sprintf("%s - %dx%02d",
 		h.suggestions.Episode.Name,
@@ -134,7 +134,7 @@ func (h *TvShowHandler) handleManualRename(ctx context.Context) error {
 	}
 
 	filename := fmt.Sprintf("%s.%s", result, h.suggestions.Episode.Extension)
-	ui.ShowInfo("Renaming episode %s to %s",
+	ui.ShowInfo(ctx, "Renaming episode %s to %s",
 		pterm.Yellow(h.suggestions.Episode.OriginalFilename),
 		pterm.Yellow(filename),
 	)
@@ -155,18 +155,18 @@ func (h *TvShowHandler) renameEpisode(
 ) error {
 	newFilename := mediarenamer.GenerateEpisodeFilename(h.config.Renamer.Patterns.TVShow, tvShow, episode, suggestion.Episode)
 	if newFilename == suggestion.Episode.OriginalFilename {
-		ui.ShowSuccess("Original filename is already correct for %s", pterm.Yellow(suggestion.Episode.OriginalFilename))
+		ui.ShowSuccess(ctx, "Original filename is already correct for %s", pterm.Yellow(suggestion.Episode.OriginalFilename))
 		return nil
 	}
 
-	ui.ShowInfo("Renaming episode %s to %s",
+	ui.ShowInfo(ctx, "Renaming episode %s to %s",
 		pterm.Yellow(suggestion.Episode.OriginalFilename),
 		pterm.Yellow(newFilename),
 	)
 
 	err := h.mediaRenamer.RenameEpisode(ctx, suggestion.Episode, tvShow, episode, h.config.Renamer.Patterns.TVShow, h.config.Renamer.DryRun)
 	if err != nil {
-		ui.ShowError("Error renaming episode: %v", err)
+		ui.ShowError(ctx, "Error renaming episode: %v", err)
 		return err
 	}
 	return nil

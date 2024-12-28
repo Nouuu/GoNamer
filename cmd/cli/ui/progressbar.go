@@ -1,11 +1,13 @@
 package ui
 
 import (
+	"context"
+
 	"github.com/pterm/pterm"
 )
 
-func HandlePbStop(pb *pterm.ProgressbarPrinter) {
+func HandlePbStop(ctx context.Context, pb *pterm.ProgressbarPrinter) {
 	if _, err := pb.Stop(); err != nil {
-		ShowError("Error stopping progress bar: %v", err)
+		ShowError(ctx, "Error stopping progress bar: %v", err)
 	}
 }

@@ -40,7 +40,7 @@ func (h *MovieHandler) Handle(ctx context.Context) error {
 	}
 
 	if h.QuickMode {
-		ui.ShowSuccess("Quick - Renaming movie %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
+		ui.ShowSuccess(ctx, "Quick - Renaming movie %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
 		return h.renameMovie(ctx, h.suggestion, h.suggestion.SuggestedMovies[0])
 	}
 
@@ -68,7 +68,7 @@ func (h *MovieHandler) handleOptions(ctx context.Context) error {
 
 	menuBuilder.AddStandardOptions(
 		func() error {
-			ui.ShowInfo("Skipping renaming of %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
+			ui.ShowInfo(ctx, "Skipping renaming of %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
 			return nil
 		},
 		func() error {
@@ -102,7 +102,7 @@ func (h *MovieHandler) handleManualSearch(ctx context.Context) error {
 }
 
 func (h *MovieHandler) handleManualRename(ctx context.Context) error {
-	ui.ShowInfo("Renaming manually for %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
+	ui.ShowInfo(ctx, "Renaming manually for %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
 
 	defaultValue := fmt.Sprintf("%s (%d)", h.suggestion.Movie.Name, h.suggestion.Movie.Year)
 	result, err := ui.PromptText("Enter new filename (without extension)", defaultValue)
@@ -111,7 +111,7 @@ func (h *MovieHandler) handleManualRename(ctx context.Context) error {
 	}
 
 	filename := fmt.Sprintf("%s.%s", result, h.suggestion.Movie.Extension)
-	ui.ShowInfo("Renaming movie %s to %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename), pterm.Yellow(filename))
+	ui.ShowInfo(ctx, "Renaming movie %s to %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename), pterm.Yellow(filename))
 
 	return h.mediaRenamer.RenameFile(
 		ctx,
@@ -124,7 +124,7 @@ func (h *MovieHandler) handleManualRename(ctx context.Context) error {
 func (h *MovieHandler) renameMovie(ctx context.Context, suggestion mediarenamer.MovieSuggestions, movie mediadata.Movie) error {
 	newFilename := mediarenamer.GenerateMovieFilename(h.config.Renamer.Patterns.Movie, movie, suggestion.Movie)
 	if newFilename == suggestion.Movie.OriginalFilename {
-		ui.ShowSuccess("Original filename is already correct for %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
+		ui.ShowSuccess(ctx, "Original filename is already correct for %s", pterm.Yellow(h.suggestion.Movie.OriginalFilename))
 		return nil
 	}
 

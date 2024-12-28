@@ -1,9 +1,13 @@
 package ui
 
-import "github.com/pterm/pterm"
+import (
+	"context"
 
-func HandleSpinnerStop(spinner *pterm.SpinnerPrinter) {
+	"github.com/pterm/pterm"
+)
+
+func HandleSpinnerStop(ctx context.Context, spinner *pterm.SpinnerPrinter) {
 	if err := spinner.Stop(); err != nil {
-		ShowError("Error stopping spinner: %v", err)
+		ShowError(ctx, "Error stopping spinner: %v", err)
 	}
 }

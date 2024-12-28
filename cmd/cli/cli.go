@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"errors"
-	"os"
 
 	"github.com/nouuu/gonamer/cmd/cli/handlers"
 	"github.com/nouuu/gonamer/cmd/cli/ui"
@@ -34,43 +33,44 @@ func NewCli(scanner mediascanner.MediaScanner, mediaRenamer *mediarenamer.MediaR
 	}
 }
 
-func (c *Cli) Run(ctx context.Context) {
+func (c *Cli) Run(ctx context.Context) error {
 	switch c.config.Renamer.Type {
 	case config.Movie:
-		c.processMovie(ctx)
+		return c.processMovie(ctx)
 	case config.TvShow:
-		c.processTvShow(ctx)
+		return c.processTvShow(ctx)
 	}
+	return nil
 }
 
-func (c *Cli) processMovie(ctx context.Context) {
+func (c *Cli) processMovie(ctx context.Context) error {
 	movies, err := c.ScanMovies(ctx)
 	if err != nil {
-		ui.ShowError("Error scanning movies: %v", err)
-		return
+		ui.ShowError(ctx, "Error scanning movies: %v", err)
+		return err
 	}
 
-	c.processMoviesList(ctx, movies)
+	return c.processMoviesList(ctx, movies)
 }
 
-func (c *Cli) processMoviesList(ctx context.Context, movies []mediascanner.Movie) {
+func (c *Cli) processMoviesList(ctx context.Context, movies []mediascanner.Movie) error {
 	pb, _ := pterm.DefaultProgressbar.
 		WithTotal(len(movies)).
 		WithCurrent(1).
 		WithTitle("Processing movies...").Start()
-	defer ui.HandlePbStop(pb)
+	defer ui.HandlePbStop(ctx, pb)
 
 	for i, movie := range movies {
-		ui.HandlePbStop(pb)
+		ui.HandlePbStop(ctx, pb)
 
 		// Affiche le titre du film en cours
-		ui.ShowInfo("Processing movie %d/%d: %s", i+1, len(movies), pterm.Yellow(movie.OriginalFilename))
+		ui.ShowInfo(ctx, "Processing movie %d/%d: %s", i+1, len(movies), pterm.Yellow(movie.OriginalFilename))
 
 		// Recherche des suggestions
 		suggestions, err := c.mediaRenamer.SuggestMovies(ctx, movie, c.config.Renamer.MaxResults)
 		if err != nil {
 			suggestions = mediarenamer.MovieSuggestions{Movie: movie}
-			ui.ShowError("Error finding suggestions for %s: %v", movie.OriginalFilename, err)
+			ui.ShowError(ctx, "Error finding suggestions for %s: %v", movie.OriginalFilename, err)
 		}
 
 		// Création et exécution du handler
@@ -84,9 +84,9 @@ func (c *Cli) processMoviesList(ctx context.Context, movies []mediascanner.Movie
 
 		if err := handler.Handle(ctx); err != nil {
 			if errors.Is(err, ErrExit) {
-				c.Exit()
+				return c.Exit()
 			}
-			ui.ShowError("Error handling movie: %v", err)
+			ui.ShowError(ctx, "Error handling movie: %v", err)
 		}
 		pb, _ = pterm.DefaultProgressbar.
 			WithTotal(len(movies)).
@@ -95,35 +95,36 @@ func (c *Cli) processMoviesList(ctx context.Context, movies []mediascanner.Movie
 			Start()
 	}
 
-	ui.ShowSuccess("Finished processing movies")
+	ui.ShowSuccess(ctx, "Finished processing movies")
+	return nil
 }
 
-func (c *Cli) processTvShow(ctx context.Context) {
+func (c *Cli) processTvShow(ctx context.Context) error {
 	episodes, err := c.ScanTvEpisodes(ctx)
 	if err != nil {
-		ui.ShowError("Error scanning tv shows: %v", err)
-		return
+		ui.ShowError(ctx, "Error scanning tv shows: %v", err)
+		return err
 	}
 
-	c.processEpisodesList(ctx, episodes)
+	return c.processEpisodesList(ctx, episodes)
 }
 
-func (c *Cli) processEpisodesList(ctx context.Context, episodes []mediascanner.Episode) {
+func (c *Cli) processEpisodesList(ctx context.Context, episodes []mediascanner.Episode) error {
 	pb, _ := pterm.DefaultProgressbar.WithTotal(len(episodes)).WithCurrent(1).WithTitle("Processing episodes...").Start()
-	defer ui.HandlePbStop(pb)
+	defer ui.HandlePbStop(ctx, pb)
 
 	for i, episode := range episodes {
 		// Stop la barre avant d'afficher le menu
-		ui.HandlePbStop(pb)
+		ui.HandlePbStop(ctx, pb)
 
 		// Affiche le titre de l'épisode en cours
-		ui.ShowInfo("Processing episode %d/%d: %s", i+1, len(episodes), pterm.Yellow(episode.OriginalFilename))
+		ui.ShowInfo(ctx, "Processing episode %d/%d: %s", i+1, len(episodes), pterm.Yellow(episode.OriginalFilename))
 
 		// Recherche des suggestions
 		suggestions, err := c.mediaRenamer.SuggestEpisodes(ctx, episode, c.config.Renamer.MaxResults)
 		if err != nil {
 			suggestions = mediarenamer.EpisodeSuggestions{Episode: episode}
-			ui.ShowError("Error finding suggestions for %s: %v", episode.OriginalFilename, err)
+			ui.ShowError(ctx, "Error finding suggestions for %s: %v", episode.OriginalFilename, err)
 		}
 
 		// Création et exécution du handler
@@ -137,9 +138,9 @@ func (c *Cli) processEpisodesList(ctx context.Context, episodes []mediascanner.E
 
 		if err := handler.Handle(ctx); err != nil {
 			if errors.Is(err, ErrExit) {
-				c.Exit()
+				return c.Exit()
 			}
-			ui.ShowError("Error handling episode: %v", err)
+			ui.ShowError(ctx, "Error handling episode: %v", err)
 		}
 
 		// Redémarre la barre après le menu
@@ -150,10 +151,11 @@ func (c *Cli) processEpisodesList(ctx context.Context, episodes []mediascanner.E
 			Start()
 	}
 
-	ui.ShowSuccess("Finished processing episodes")
+	ui.ShowSuccess(ctx, "Finished processing episodes")
+	return nil
 }
 
-func (c *Cli) Exit() {
+func (c *Cli) Exit() error {
 	pterm.Info.Println("Exiting...")
-	os.Exit(0)
+	return nil
 }

@@ -100,11 +100,6 @@ func LoadConfig(configPath string) (*Config, error) {
 	}
 	cfg.Scanner.MediaPath = absPath
 
-	// Validate the final configuration
-	if err := cfg.validate(); err != nil {
-		return nil, err
-	}
-
 	return &cfg, nil
 }
 

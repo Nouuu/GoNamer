@@ -54,7 +54,7 @@ func (c *Config) applyDefaults() {
 }
 
 // validate performs comprehensive validation of the configuration
-func (c *Config) validate() error {
+func (c *Config) Validate() error {
 	var errs ValidationErrors
 
 	// Validate required fields
