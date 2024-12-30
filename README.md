@@ -159,7 +159,7 @@ make test
     - Design YAML configuration structure
     - Implement configs file loading
     - Add validation layer
-- [ ] Enhance CLI with Cobra framework
+- [x] Enhance CLI with Cobra framework
     - Migrate to Cobra commands
     - Add command documentation
     - Implement config path override
@@ -174,6 +174,11 @@ make test
     - Progress bars for batch operations
     - Preview mode with detailed changes
     - Summary report after operations
+     
+- [ ] Web interface
+  - A better UI with web interface
+
+- [ ] Docker image ?
 
 - [ ] Advanced File Management
     - Cache for previously processed files
