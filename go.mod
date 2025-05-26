@@ -1,9 +1,9 @@
 module github.com/nouuu/gonamer
 
-go 1.22.0
+go 1.24
 
 require (
-	github.com/cyruzin/golang-tmdb v1.6.8
+	github.com/cyruzin/golang-tmdb v1.8.1
 	github.com/eko/gocache/lib/v4 v4.2.0
 	github.com/eko/gocache/store/go_cache/v4 v4.2.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -21,14 +21,12 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/containerd/console v1.0.4 // indirect
+	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/gookit/color v1.5.4 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/client_golang v1.20.5 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
