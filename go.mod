@@ -1,10 +1,10 @@
 module github.com/nouuu/gonamer
 
-go 1.22.0
+go 1.25
 
 require (
 	github.com/cyruzin/golang-tmdb v1.6.8
-	github.com/eko/gocache/lib/v4 v4.2.0
+	github.com/eko/gocache/lib/v4 v4.2.1
 	github.com/eko/gocache/store/go_cache/v4 v4.2.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pterm/pterm v0.12.80
